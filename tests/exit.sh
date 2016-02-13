@@ -1,27 +1,50 @@
 #!bin/bash
-echo junk && exit
+echo "junk && exit"
 
-echo &&exit
+junk && exit
 
-echo junk || exit
+echo "&&exit"
 
-echo exit
+&&exit
 
-echo keep going?
+echo "junk || exit"
 
-echo should be done exit
+junk || exit
 
-echo I think that's why it's red;
+echo "exit"
+
+exit
+
+echo "keep going?"
+
+keep going
+
+echo "should be done exit"
+
+should be done exit
+
+echo "I think that's why it's red;"
  
-echo ls; && junk
+I think that's why it's red
 
-echo cout rungging sjlnj endl
+echo "ls; && junk"
 
-echo exit # typing for enought test cases
+ls; && junk
 
-echo # won't get here but exit
+echo "cout rungging sjlnj endl"
 
-echo exit(0)
+cout rungging sjlnj endl
 
-echo ccccccccc exit
+echo exit "# typing for enought test cases"
 
+# typing for enought test cases
+
+echo "# won't get here but exit"
+
+# won't get here but exit
+
+echo "exit(0)"
+
+exit(0)
+
+echo 

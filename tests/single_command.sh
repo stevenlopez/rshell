@@ -1,23 +1,42 @@
 #!bin/bash
-echo testing;
+echo "testing;"
 
-echo list;
+echo "list;"
 
-echo list -all;
+list;
+
+echo "list -all;"
  
-echo repeat this string&& stimg;
+list -all;
+ 
+echo "repeat this string&& stimg;"
 
-echo ls -a;
+repeat this string&& stimg;
 
-echo repeat line;
+echo "ls -a;"
 
-echo ll;
+ls -a;
 
-echo cd;
+echo "repeat line;"
 
-echo test;
+"repeat line;"
 
-echo set files;
+echo "ll;"
+
+ll;
+
+echo "cd;"
+
+cd;
+
+echo "test;"
+
+test;
+
+echo "set files;"
+
+set files;
 
 echo ls;
 
+ls;

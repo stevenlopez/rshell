@@ -1,34 +1,65 @@
 #!bin/bash
-echo junk || ls || junk || junk
+echo "junk || ls || junk || junk"
 
-echo ls || ls || ls || ls || ls
+junk || ls || junk || junk
 
-echo ls && ls && ls && ls && ls 
+echo "ls || ls || ls || ls || ls"
 
-echo junk && ls && ls && ls && junk && ls
+ls || ls || ls || ls || ls
+ 
+echo "ls && ls && ls && ls && ls" 
 
-echo stuff to test; repeat the line && ls
+ls && ls && ls && ls && ls 
 
-echo output nothing || stuff || ls || junk
+echo "junk && ls && ls && ls && junk && ls"
 
-echo ls; ls; junk; && ls
+junk && ls && ls && ls && junk && ls
 
-echo ; run this command, && ls
+echo "stuff to test; repeat the line && ls"
 
-echo ls -a && ls -a && ls -a; junk && ls -a
+stuff to test; repeat the line && ls
 
-echo ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+echo "output nothing || stuff || ls || junk"
 
-echo l;l;l;l;l;l;l;l;l;l;l;;l;l;l;l;l;l;l;l;l
+output nothing || stuff || ls || junk
 
-echo ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;
+echo "ls; ls; junk; && ls"
 
-echo ls -a files && echo junk;
+ls; ls; junk; && ls
 
-echo stuff && cout present; || ls
+echo "; run this command, && ls"
 
-echo ls &&|| ls
+; run this command, && ls
 
-echo ls && junk || junk || && junk || hello
+echo "ls -a && ls -a && ls -a; junk && ls -a"
 
+ls -a && ls -a && ls -a; junk && ls -a
+
+echo ";;;;;;;;;;;;;;;;;;;;;;;;;;;;"
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+echo "l;l;l;l;l;l;l;l;l;l;l;;l;l;l;l;l;l;l;l;l"
+
+l;l;l;l;l;l;l;l;l;l;l;;l;l;l;l;l;l;l;l;l
+
+echo "ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;"
+
+ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;
+
+echo "ls -a files && echo junk;"
+
+ls -a files && echo junk;
+
+echo "stuff && cout present; || ls"
+
+stuff && cout present; || ls
+ 
+echo "ls &&|| ls"
+
+ls &&|| ls
+
+echo "ls && junk || junk || && junk || hello"
+
+ls && junk || junk || && junk || hello
 

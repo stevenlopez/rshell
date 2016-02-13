@@ -1,18 +1,34 @@
 #!bin/bash
 echo "commented commands"
 
-echo ls -a && junk && ls # && ls
+echo "ls -a && junk && ls # && ls"
 
-echo junk && #dont output this
+ls -a && junk && ls # && ls
 
-echo #dont do any of this; || this || ls
+echo "junk && #dont output this"
 
-echo ls && #; test
+junk && #dont output this
 
-echo junk && ls && # echo here
+echo "#dont do any of this; || this || ls"
 
-echo LS || LS || # || stuff
+#dont do any of this; || this || ls
 
-echo "#" TEST THIS OUT
+echo "ls && #; test"
 
-echo #done with the test cases here
+ls && #; test
+
+echo "junk && ls && # echo here"
+
+junk && ls && # echo here
+
+echo "LS || LS || # || stuff"
+
+LS || LS || # || stuff
+
+echo ""#" TEST THIS OUT"
+
+"#" TEST THIS OUT
+
+echo "#done with the test cases here"
+
+"done with the test cases here"
