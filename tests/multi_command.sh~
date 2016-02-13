@@ -17,18 +17,3 @@ echo ; run this command, && ls
 
 echo ls -a && ls -a && ls -a; junk && ls -a
 
-echo ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-echo l;l;l;l;l;l;l;l;l;l;l;;l;l;l;l;l;l;l;l;l
-
-echo ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;ls;
-
-echo ls -a files && echo junk;
-
-echo stuff && cout present; || ls
-
-echo ls &&|| ls
-
-echo ls && junk || junk || && junk || hello
-
-
