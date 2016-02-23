@@ -13,13 +13,17 @@
 using namespace std;
 using namespace boost;
 
-int Test(char** args, bool &previous){    //pass in the command and previous
+int Test(char** args, bool &previous, bool &previous_prev, int con, int prev_con){ 
+    // fails cases such as ls || ls || ls || ls || ls && stuff && ls
+   //pass in the command and previous
     if (strcmp(args[0], "exit") == 0){    //if exit is the command 
         exit(0);                          //then exit
     }
-    
-    if(previous == false){                //check if the last one was false
+    if((previous == false) && (con != 2) && (prev_con != 2)){                //check if the last one was false
         return EXIT_FAILURE;              //will/should only work for &&
+    }
+    if((previous == true) && (prev_con == 2)){
+      return 0;//EXIT_FAILURE;
     }
     
     pid_t pid = fork();                   //start forking
@@ -89,7 +93,7 @@ void Print(vector<string> pts){                  //function that prints string v
 }
        	    
 
-void Parse(vector<string> &ParseString, int size, bool P_previous){
+void Parse(vector<string> &ParseString, int size, bool P_previous, bool P_previous_prev, int P_conn, int P_conn_prev){
 if(size < 1){                                       //passing in nothing = return
     return;
 }
@@ -97,6 +101,8 @@ if(size < 1){                                       //passing in nothing = retur
 
 int ParseSize;                                      // will need variables for later
 string connector;                                   //will hold the ;/&&/||
+int P_con_prev = P_conn;
+int P_con;
 unsigned i = 0;                                     //basic counter
 vector<string> S_T_E;                               //empty vector to be filled in
 
@@ -119,21 +125,26 @@ string SP = ParseString.at(0);                       //if input is ;/&&/|| then 
     
     
         if(i == ((ParseString.size()))){            //checks the last character
-           connector = "0";                        // 0 connector
+           connector = "0";
+           P_con = 0;                        // 0 connector
            //cout << " in 0" << endl;
         }                                           //sets connnector
             
-        else if(ParseString.at(i) == ";"){          // ; connector
-              connector = ";";
-              //cout << " in ;" << endl;
-        }
         else if(ParseString.at(i) == "&&"){         //&& connector
               connector = "&&";
+              P_con = 1;
               //cout << " in &&" << endl;
         }
         else if(ParseString.at(i) == "||"){         //|| connector
               connector = "||"; 
+              P_con = 2;
               //cout << " in ||" << endl;
+        }
+        
+        else if(ParseString.at(i) == ";"){          // ; connector
+              connector = ";";
+              P_con = 3;
+              //cout << " in ;" << endl;
         }
 
 char** args = new char*[128];                        //creates new array to store the characters
@@ -148,7 +159,9 @@ char** args = new char*[128];                        //creates new array to stor
     }
     args[ParseSize] = '\0';                          // null terminating character at the end
     
-    int temp = Test(args, P_previous);              //checks whether it executed or not      
+    int temp = Test(args, P_previous, P_previous_prev, P_con, P_con_prev);              //checks whether it executed or not 
+    P_previous_prev = P_previous;  
+   
     if(temp == 0){                                  // sets out boolean P_previous
         P_previous = true;
     }
@@ -161,25 +174,27 @@ char** args = new char*[128];                        //creates new array to stor
             ParseString.erase(ParseString.begin(), ParseString.begin() + i);
             
             P_previous = true;
-            Parse(ParseString, ParseString.size(), P_previous);
+            Parse(ParseString, ParseString.size(), P_previous, P_previous_prev, P_con, P_con_prev);
         }   
         if(connector == "&&"){                   //&& case(only one not set to true*******)
             ParseString.erase(ParseString.begin(), ParseString.begin() + i + 1);
-            Parse(ParseString, ParseString.size(), P_previous);
+            Parse(ParseString, ParseString.size(), P_previous, P_previous_prev, P_con, P_con_prev);
             
         }
         
         if(connector == "||"){                   //|| case
             ParseString.erase(ParseString.begin(), ParseString.begin() + i + 1);
             
+            if((P_previous_prev == true) && (P_con_prev == 2)){
             P_previous = true;
-            Parse(ParseString, ParseString.size(), P_previous);
+            }
+            Parse(ParseString, ParseString.size(), P_previous, P_previous_prev, P_con, P_con_prev);
         }
         if(connector == ";"){                    //; case
             ParseString.erase(ParseString.begin(), ParseString.begin() + i + 1);
             
             P_previous = true;
-            Parse(ParseString, ParseString.size(),  P_previous);
+            Parse(ParseString, ParseString.size(),  P_previous, P_previous_prev, P_con, P_con_prev);
             
         }
         return;
@@ -189,6 +204,7 @@ char** args = new char*[128];                        //creates new array to stor
 int main(){
 
 bool MainPrevious = true;   //allows us to run our first command
+bool MainPrevious_prev = false;
 vector<string> cmd;         //vector to hold our string
 string str;                 //will simply be our input string
 
@@ -207,7 +223,7 @@ while(1){
     
     Delete_Comment(cmd);                                     // checks for #
     int size = cmd.size();                                   //gets updated size(if changed)
-    Parse(cmd, size, MainPrevious);                          //starts parsing commands
+    Parse(cmd, size, MainPrevious, MainPrevious_prev, 0, 0);                          //starts parsing commands
     }
 
 return 0;
