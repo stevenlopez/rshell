@@ -212,8 +212,22 @@ char** args = new char*[128];                        //creates new array to stor
     //cout << "Par previous previous: " << Par_previous_prev << endl;
     int temp;
     //cout << S_T_E.at(0) << S_T_E.at(ParseSize - 1) << endl;
-    if((S_T_E.at(0) == "test") || ((S_T_E.at(0) == "[") && (S_T_E.at(ParseSize - 1) == "]"))){
-        cout << "Create test  case: \n";
+    if(S_T_E.at(0) == "test"){
+        vector<string> P_T_S = S_T_E;
+        P_T_S.erase(P_T_S.begin());
+        cout << " test \n";
+        Print(P_T_S);
+        cout << endl;
+        //testFunctionality(P_T_S);
+        
+    }
+    else if((S_T_E.at(0) == "[") && (S_T_E.at(ParseSize - 1) == "]")){
+        vector<string> P_T_S = S_T_E;
+        P_T_S.erase(P_T_S.begin());
+        P_T_S.erase(P_T_S.end());
+        cout << " [ ] \n";
+        //testFunctionality(P_T_S);
+        
     }
     //INERT MAGIC HERE
     else{
