@@ -90,16 +90,19 @@ void Print(vector<string> pts){                  //function that prints string v
 }
 
              ////////// assn 3 code  //////////////
-int checkFlag(vector<string> str){
+int checkFlag(vector<string> &str){
     int flag = 0;
     if(str.at(0) == "-e"){
         flag = 1;
+        str.erase(str.begin());
     }
     else if(str.at(0) == "-f"){
         flag = 2;
+        str.erase(str.begin());
     }
     else if(str.at(0) == "-d"){
         flag = 3;
+        str.erase(str.begin());
     }
     return flag;
 }
@@ -127,16 +130,18 @@ void testFunctionality(vector<string> ParsedString, unsigned index){
     }
     // check what's in vector
     for(unsigned i = 0; i < end; ++i){
-        //cout << ParsedString.at(i) << ' ';
+        cout << ParsedString.at(i) << ' ';
     }
 
     char *path;
-    if(flag == 0){
+    //if(flag == 0){
         path = strdup((ParsedString.at(0)).c_str());
-    }
+    //}
+    /*
     else{
         path = strdup((ParsedString.at(1)).c_str());
-    }    
+    } 
+    */   
 
     struct stat s;
     if(flag == 0 || flag == 1){
