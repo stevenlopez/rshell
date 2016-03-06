@@ -261,9 +261,24 @@ if(P_size > 126){                             // limit of 127 strings as one com
  
 
     int temp;
+    unsigned itr = 0;
+    bool matching = false;
     //cout << S_T_E.at(0) << S_T_E.at(P_size - 1) << endl;
     if((S_T_E.at(0) == "test") || (S_T_E.at(0) == "[")){
         vector<string> P_T_S = S_T_E;
+        if(S_T_E.at(0) == "["){
+            while(itr < S_T_E.size()){
+                if(S_T_E.at(itr) == "]"){
+                    matching = true;
+                    break;
+                }
+                ++itr;
+            }
+            if(matching == false){
+                cout << "Error: no matching bracket" << endl;
+                exit(-1);
+            }
+        }
         P_T_S.erase(P_T_S.begin());
         //cout << " test \n";
         //Print(P_T_S);
