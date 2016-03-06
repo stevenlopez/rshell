@@ -104,6 +104,7 @@ int checkFlag(vector<string> str){
     return flag;
 }
 
+/*
 bool ifExists(vector<string> &ParseString, int flag){
     unsigned i = 0;
     while(i < ParseString.size()){
@@ -113,6 +114,7 @@ bool ifExists(vector<string> &ParseString, int flag){
     }
     return false;
 }
+*/
 
 
 
@@ -125,7 +127,7 @@ void testFunctionality(vector<string> ParsedString, unsigned index){
     }
     // check what's in vector
     for(unsigned i = 0; i < end; ++i){
-        cout << ParsedString.at(i) << ' ';
+        //cout << ParsedString.at(i) << ' ';
     }
 
     char *path;
@@ -192,7 +194,7 @@ while((i < ParseString.size())
     && (ParseString.at(i) != "||")                  //that will execute
     && (ParseString.at(i) != "&&")){                //stops when connector/empty
     //assn 3 code    
-    if(ParseString.at(0) == "test" || ParseString.at(0) == "["){
+        if(ParseString.at(0) == "test" || (ParseString.at(0) == "[")){
             test_cmd = true;
         }
         
@@ -231,13 +233,12 @@ string SP = ParseString.at(0);                       //if input is ;/&&/|| then 
         // assignment 3 code. check for test commands
         
         if(test_cmd == true){
-            cout << "entered" << endl;
                 while(j < ParseString.size()){ 
                     if(ParseString.at(j) == "test"){
                         S_T_E.erase(S_T_E.begin() + j);
                         --ParseSize;
                         testFunctionality(S_T_E, 0);
-                        cout << checkFlag(S_T_E) << endl;
+                        //cout << checkFlag(S_T_E) << endl;
                         break;
                     }
                     else if(ParseString.at(j) == "["){
@@ -246,7 +247,7 @@ string SP = ParseString.at(0);                       //if input is ;/&&/|| then 
                                 S_T_E.erase(S_T_E.begin() + j);
                                 --ParseSize;
                                 testFunctionality(S_T_E, 0);
-                                cout << checkFlag(S_T_E) << endl;
+                                //cout << checkFlag(S_T_E) << endl;
                                 matching = true;
                                 break;
                             }
@@ -270,11 +271,11 @@ string SP = ParseString.at(0);                       //if input is ;/&&/|| then 
     char** args = new char*[128];                        //creates new array to store the characters
     
     if(test_cmd == true || matching == true){           //assn3 code
-        cout << "line 284" << endl;
+        //cout << "line 284" << endl;
         goto skipexec;    
     } // assn 3 code
     
-    cout << "line 288" << endl;
+    //cout << "line 288" << endl;
 
     for(int i = 0; i < ParseSize; i++){
         char * temp = strdup(S_T_E.at(i).c_str());
@@ -325,14 +326,14 @@ skipexec:
         //assn 3 code
         if(test_cmd == true || matching == true){
             if(matching == true){
-                ParseString.erase(ParseString.begin(), ParseString.begin() +  + 2);
+                //ParseString.erase(ParseString.begin(), ParseString.begin() + 2);
                 P_previous = true;
-                Parse(ParseString, ParseString.size(), P_previous);
+                //Parse(ParseString, ParseString.size(), P_previous);
             }
             else{
-                ParseString.erase(ParseString.begin(), ParseString.begin() + i + 1);
+                //ParseString.erase(ParseString.begin() + j + 1);
                 P_previous = true;
-                Parse(ParseString, ParseString.size(), P_previous);
+                //Parse(ParseString, ParseString.size(), P_previous);
             }
         }
         // assn 3 code
