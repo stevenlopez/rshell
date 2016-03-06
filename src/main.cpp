@@ -37,22 +37,22 @@ int checkFlag(vector<string> &str){
 }
 
 
-void testFunctionality(vector<string> ParsedString, unsigned index, bool p, int con, int p_con, bool Par_p, int Par_con_p, bool in_par, int size){
+int testFunctionality(vector<string> ParsedString, unsigned index, bool p, int con, int p_con, bool Par_p, int Par_con_p, bool in_par, int size){
     if(in_par == true){
     
     if((Par_p == false) && (con != 2) && (Par_con_p != 2))                //may need to get rid of the last condition
     {
-        return;// EXIT_FAILURE;   
+        return 1;   
     }
     if((Par_p == true) && (Par_con_p == 2)){  
-        return;// EXIT_FAILURE;
+        return 1;
     }
    }
    if((p == false) && (p_con != 2)){                //check if the last one was false
-        return;// EXIT_FAILURE;             
+        return 1;             
     }
     if((p == true) && (p_con == 2)){
-      return;// 0;
+      return 0;
     }
     int flag = checkFlag(ParsedString);
     unsigned end = ParsedString.size();
@@ -74,27 +74,33 @@ void testFunctionality(vector<string> ParsedString, unsigned index, bool p, int 
 
     struct stat s;
     if(flag == 0 || flag == 1){
-        if(stat(path, &s) == 0){
+        if(stat(path, &s) == 0){                      
             cout << "(TRUE)" << endl;
+            return 0;
         }
         else{
             cout << "(FALSE)" << endl;
+            return 1;
         }
     }
     else if(flag == 2){
-        if(s.st_mode & S_IFREG){
+        if(s.st_mode && S_IFREG){                      //&& instead of &
             cout << "(TRUE)" << endl;
+            return 0;
         }
         else{
             cout << "(FALSE)" << endl;
+            return 1;
         }
     }
     else if(flag == 3){
-        if(s.st_mode & S_IFDIR){
+        if(s.st_mode && S_IFDIR){                      //&& instead of &
             cout << "(TRUE)" << endl;
+            return 0;
         }
         else{
             cout << "(FALSE)" << endl;
+            return 1;
         } 
     }
     else{
@@ -262,7 +268,7 @@ if(P_size > 126){                             // limit of 127 strings as one com
         //cout << " test \n";
         //Print(P_T_S);
         //cout << endl;
-        testFunctionality(P_T_S, 0, p, P_con, P_con_p, Par_p, Par_con_p, in_paren, P_size);
+    temp = testFunctionality(P_T_S, 0, p, P_con, P_con_p, Par_p, Par_con_p, in_paren, P_size);
         
     }
     else{
