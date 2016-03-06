@@ -10,166 +10,239 @@
 #include <stdlib.h>
 #include <cmath>
 #include <stack>
+#include <sys/stat.h>
 
 using namespace std;
 using namespace boost;
 
-
-
-void Print(vector<string> pts);
-
+void Print(vector<string> pts);                         //forward declarations
 void Build_Paren(vector<string> &P_str, int &P_sz, int &Paren_sz);
-//Par_prev_prev = Par previous prev or the previous connection
-// Par_prev = the next connection
+
+////////////////////////////////////////////////////////////////////
+int checkFlag(vector<string> &str){                     //set flag
+    int flag = 0;
+    if(str.at(0) == "-e"){
+        flag = 1;
+        str.erase(str.begin());
+    }
+    else if(str.at(0) == "-f"){
+        flag = 2;
+        str.erase(str.begin());
+    }
+    else if(str.at(0) == "-d"){
+        flag = 3;
+        str.erase(str.begin());
+    }
+    return flag;
+}
 
 
-int execute(vector<string> s_t_e, bool &prev, bool &prev_prev, int con, int prev_con, bool Par_prev, bool Par_prev_prev, int Par_connn, int Par_connnn_prev, int paren_size_e, bool in_paren_e, int parseSize){ 
-   //pass in the command and previous
-   //cout << "PAR_prev: " << Par_prev << endl;
-   //cout << "PAR_prev_prev: " << Par_prev_prev << endl;
-   //cout << "PAR_CONNECTION: " << Par_connnn_prev << endl;
-   //cout << "connection: " << con << endl;
-   char** args = new char*[128];                        //creates new array to store the characters
-    for(int i = 0; i < parseSize; i++){
+int testFunctionality(vector<string> ParsedString, unsigned index, bool p, int con, int p_con, bool Par_p, int Par_con_p, bool in_par, int size){
+if(in_par == true){                                         //checks paranthesis
+    
+    if((Par_p == false) && (con != 2) && (Par_con_p != 2))  //Case
+    {
+        return 1;   
+    }
+    if((Par_p == true) && (Par_con_p == 2)){                //Case
+        return 1;
+    }
+}
+   if((p == false) && (p_con != 2)){                        //Case
+        return 1;             
+    }
+    if((p == true) && (p_con == 2)){                        //Case
+      return 0;
+    }
+    int flag = checkFlag(ParsedString);                     //get flag
+    unsigned end = ParsedString.size();
+    if(index > 0){
+       end = index;
+    }
+    // check what's in vector
+    for(unsigned i = 0; i < end; ++i){
+        //cout << ParsedString.at(i) << ' ';
+    }
+
+    char *path;
+    //if(flag == 0){
+        path = strdup((ParsedString.at(0)).c_str());
+    //}
+    //else{
+      //  path = strdup((ParsedString.at(1)).c_str());
+    //}    
+    //cout << "Flag: 0/1 = e, 2 = f, 3 = D :" << flag << endl;
+    struct stat s;
+    if(flag == 0 || flag == 1){
+        if(stat(path, &s) == 0){                      
+            cout << "(TRUE)" << endl;
+            return 0;
+        }
+        else{
+            cout << "(FALSE)" << endl;
+            return 1;
+        }
+    }
+    else if(flag == 2){
+        if((stat(path, &s) == 0) && (s.st_mode & S_IFREG)){     //file               
+            cout << "(TRUE)" << endl;
+            return 0;
+        }
+        else{
+            cout << "(FALSE)" << endl;
+            return 1;
+        }
+    }
+    else if(flag == 3){
+        if((stat(path, &s) == 0) && (s.st_mode & S_IFDIR)){    //directory
+            cout << "(TRUE)" << endl;
+            return 0;
+        }
+        else{
+            cout << "(FALSE)" << endl;
+            return 1;
+        } 
+    }
+    else{
+        cout << "Error" << endl;
+        exit(-1);
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////
+
+//p = previous
+int execute(vector<string> s_t_e, bool p, int con, int p_con, bool Par_p, int Par_con_p, bool in_par, int size){ 
+    
+    char** args = new char*[128];    //creates new array to store the characters
+    for(int i = 0; i < size; i++){
         char * temp = strdup(s_t_e.at(i).c_str());
         args[i] = temp;  
     }
-    args[parseSize] = '\0'; 
+    args[size] = '\0'; 
    
-   
-   if(in_paren_e == true){
-   //cout << "IN PAREN executing: \n";
+if(in_par == true){                                             //does parenthesis
     
-    if((Par_prev == false) && (con != 2) && (Par_connnn_prev != 2))                //may need to get rid of the last condition
+    if((Par_p == false) && (con != 2) && (Par_con_p != 2))      //case
     {
-        //cout << "FAIL 1: \n";
         return EXIT_FAILURE;   
     }
-    if((Par_prev == true) && (Par_connnn_prev == 2)){        //might need just par_prev_prev
-        //cout << "FAIL 2: \n";
+    if((Par_p == true) && (Par_con_p == 2)){                    //case
         return EXIT_FAILURE;
     }
-   }
-    if((prev == false) && (con != 2) && (prev_con != 2)){                //check if the last one was false
-    //cout << "FAILED normal: \n";
-        return EXIT_FAILURE;              //will/should only work for &&
+}
+   if((p == false) && (p_con != 2)){                            //case
+        return EXIT_FAILURE;             
     }
-    if((prev == true) && (prev_con == 2)){
-        //cout << "FAILED normal: \n";
-      return 0;//EXIT_FAILURE;
+    if((p == true) && (p_con == 2)){                            //case
+      return 0;
     }
-        if (strcmp(args[0], "exit") == 0){    //if exit is the command 
-        exit(0);                          //then exit
+        if (strcmp(args[0], "exit") == 0){      //if exit is the command 
+        exit(0);                                //then exit
     }
-    pid_t pid = fork();                   //start forking
-        if (pid == -1){                       //fail to fork error
+    pid_t pid = fork();                         //start forking
+        if (pid == -1){                         //fail to fork error
             perror("failed to fork");
             return EXIT_FAILURE;
     }
-    else if(pid == 0){                     //start the process              
-        if(execvp(args[0], args) == -1){   //checks to see if it failed
-            perror("execvp");              //if so output error and exit
+    else if(pid == 0){                          //start the process              
+        if(execvp(args[0], args) == -1){        //checks to see if it failed
+            perror("execvp");                   //if so output error and exit
 	          exit(1);
 	          return EXIT_FAILURE;
         }
     }
     int status;          
-    if ( waitpid(pid, &status, 0) == -1 ) { //waitpid waits(not sure what it does)
+    if ( waitpid(pid, &status, 0) == -1 ){      //waitpid waits(not sure what it does)
         perror("waitpid failed");
         exit(1);
         return EXIT_FAILURE;
     }
-    if(WIFEXITED(status)){               //always goes into here(I think so)
-        const int es = WEXITSTATUS(status);  // checks what the exit was
+    if(WIFEXITED(status)){                      //always goes into here(I think so)
+        const int es = WEXITSTATUS(status);     // checks what the exit was
         //cout << "ES " << es << endl;
-	      if(es != 0){                               //if exit was 1 then it failed(IMPORTANT)
-		        return EXIT_FAILURE;
+	    if(es != 0){                            //if exit was 1 then it failed(IMPORTANT)
+		    return EXIT_FAILURE;
         }
     }
-return EXIT_SUCCESS;                         //else return 0 for true
+return EXIT_SUCCESS;                             //else return 0 for true
 }
-       	    
-void Parse(vector<string> &ParseString, int size, bool P_previous, bool P_previous_prev, int P_conn, int P_conn_prev, bool Par_previous, bool Par_previous_prev, int Par_conn, int Par_conn_prev, int Par_conn_next, int &Paren_size, bool in_paren){
+
+
+void Parse(vector<string> &P_str, int size, bool p, bool pp, int P_con, bool Par_p, int Par_con, int Par_con_p, int Par_con_n, int &Par_size, bool in_paren){
 if(size < 1){                                       //passing in nothing = return
     return;
 }
-cout << in_paren << endl;
-if((P_conn == 3) && (in_paren != true)){                        //////May need to change this back, erase in paren
+if((P_con == 3) && (in_paren != true)){                        //////May need to change this back, erase in paren
     cout << "RESETTING: \n";
-    Par_previous = true;
-    Par_previous_prev = false;
+    Par_p = true;
 }
-int paren_size = Paren_size;
-if(paren_size <= 0){
+//int Par_size = Par_size;
+if(Par_size <= 0){
     in_paren = false;
-    paren_size = 0;
+    Par_size = 0;
 }
 
 if(in_paren == false){
     //cout << "changing par connection: \n";
-    Par_conn_prev = P_conn; 
+    Par_con_p = P_con; 
+}
+while(P_str.at(0).at(0) == '('){                        //Magical loop
+    in_paren = true;
+    Build_Paren(P_str, size, Par_size);                 //build the parenthesis
 }
 
-if(ParseString.at(0).at(0) == '('){
+/*
+if(P_str.at(0).at(0) == '('){
     //cout << "parenthesis: " << endl;
     in_paren = true;
-    if(in_paren == true){
-        Build_Paren(ParseString, size, paren_size);
-    }    
+    Build_Paren(P_str, size, Par_size);
 }
-//Print(ParseString);
-//cout << endl;
-//cout << "SIZE: " << paren_size << endl;
+*/
 
-int ParseSize;                                      // will need variables for later
+int P_size;                                      // will need variables for later
 string connector;                                   //will hold the ;/&&/||
 
-int Par_con = Par_conn_next;
-int Par_con_next = Par_conn_next;
-
-int Par_con_prev = Par_conn_prev;
-    
-int P_con_prev = P_conn;
-int P_con;
-
+int P_con_p = P_con;                            //the next connector is now prev
 
 
 
 unsigned i = 0;                                     //basic counter
 vector<string> S_T_E;                               //empty vector to be filled in
 
-while((i < ParseString.size())
-    && (ParseString.at(i) != ";")                   //creates the string 
-    && (ParseString.at(i) != "||")                  //that will execute
-    && (ParseString.at(i) != "&&")){                //stops when connector/empty
-        S_T_E.push_back(ParseString.at(i));
+while((i < P_str.size())
+    && (P_str.at(i) != ";")                   //creates the string 
+    && (P_str.at(i) != "||")                  //that will execute
+    && (P_str.at(i) != "&&")){                //stops when connector/empty
+        S_T_E.push_back(P_str.at(i));
         ++i;
-        ParseSize = i;
+        P_size = i;
     }
 
-string SP = ParseString.at(0);                       //if input is ;/&&/|| then error
+string SP = P_str.at(0);                       //if input is ;/&&/|| then error
     if((SP == ";") || (SP == "||") || (SP == "&&")){
-        ParseString.erase(ParseString.begin(), ParseString.end());  //delete full string 
+        P_str.erase(P_str.begin(), P_str.end());  //delete full string 
         cout << "bash: syntax error near unexpected token '" <<  SP << "'" << endl;
         return;
     }
     
-        if(i == ((ParseString.size()))){            //checks the last character
+        if(i == ((P_str.size()))){            //checks the last character
            connector = "0";
            P_con = 0;                        // 0 connector
            //cout << " in 0" << endl;
         }                                           //sets connnector
-        else if(ParseString.at(i) == "&&"){         //&& connector
+        else if(P_str.at(i) == "&&"){         //&& connector
               connector = "&&";
               P_con = 1;
               //cout << " in &&" << endl;
         }
-        else if(ParseString.at(i) == "||"){         //|| connector
+        else if(P_str.at(i) == "||"){         //|| connector
               connector = "||"; 
               P_con = 2;
               //cout << " in ||" << endl;
         }
-        else if(ParseString.at(i) == ";"){          // ; connector
+        else if(P_str.at(i) == ";"){          // ; connector
               connector = ";";
               P_con = 3;
               //cout << " in ;" << endl;
@@ -178,165 +251,115 @@ string SP = ParseString.at(0);                       //if input is ;/&&/|| then 
 
 
 
-
-
-if(ParseSize > 126){                             // limit of 127 strings as one command
+if(P_size > 126){                             // limit of 127 strings as one command
         cout << "INPUT TOO LARGE" << endl;
         return;
-    }
-/*    
-char** args = new char*[128];                        //creates new array to store the characters
-    for(int i = 0; i < ParseSize; i++){
-        char * temp = strdup(S_T_E.at(i).c_str());
-        args[i] = temp;  
-    }
-*/
-    cout << "Executing this string: \n";
-    Print(S_T_E);
-    cout << endl;
-    cout << "END STRING: \n";
-    //args[ParseSize] = '\0';                          // null terminating character at the end
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //cout << "Par previous: " << Par_previous << endl;
-    //cout << "Par previous previous: " << Par_previous_prev << endl;
+}
+
     int temp;
-    //cout << S_T_E.at(0) << S_T_E.at(ParseSize - 1) << endl;
-    if(S_T_E.at(0) == "test"){
+    unsigned itr = 0;
+    bool matching = false;
+    //cout << S_T_E.at(0) << S_T_E.at(P_size - 1) << endl;
+    if((S_T_E.at(0) == "test") || (S_T_E.at(0) == "[")){
         vector<string> P_T_S = S_T_E;
+        if(S_T_E.at(0) == "["){
+            while(itr < S_T_E.size()){
+                if(S_T_E.at(itr) == "]"){
+                    matching = true;
+                    break;
+                }
+                ++itr;
+            }
+            if(matching == false){
+                cout << "Error: no matching bracket" << endl;
+                return;
+            }
+        }
         P_T_S.erase(P_T_S.begin());
-        cout << " test \n";
-        Print(P_T_S);
-        cout << endl;
-        //testFunctionality(P_T_S);
-        
-    }
-    else if((S_T_E.at(0) == "[") && (S_T_E.at(ParseSize - 1) == "]")){
-        vector<string> P_T_S = S_T_E;
-        P_T_S.erase(P_T_S.begin());
-        P_T_S.erase(P_T_S.end());
-        cout << " [ ] \n";
-        //testFunctionality(P_T_S);
-        
-    }
-    //INERT MAGIC HERE
-    else{
-    temp = execute(S_T_E, P_previous, P_previous_prev, P_con, P_con_prev, Par_previous, Par_previous_prev, Par_con, Par_con_prev, paren_size, in_paren, ParseSize);              //checks whether it executed or not 
-    }
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    //bool Par_temp = P_previous_prev;                //might need to edit this
-    P_previous_prev = P_previous;  
    
-    if(temp == 0){                                  // sets out boolean P_previous
-        P_previous = true;
+    temp = testFunctionality(P_T_S, 0, p, P_con, P_con_p, Par_p, Par_con_p, in_paren, P_size);
+        
     }
     else{
-        P_previous = false;
+    temp = execute(S_T_E, p, P_con, P_con_p, Par_p, Par_con_p, in_paren, P_size);  
     }
-    //if(in_paren == true){
-    //    Par_previous = P_previous;
-    //}
-    //else{
-    //    Par_previous = Par_temp;                 //FIX HERE
-    //}
-    //Par_previous_prev
     
-    if(in_paren != true){
-        Par_con_next = P_con_prev;
+    pp = p;  
+   
+    if(temp == 0){                                  // sets out boolean p
+        p = true;
+    }
+    else{
+        p = false;
+    }
+    
+    if(in_paren != true){                           //updates parenthesis con
+        Par_con_n = P_con_p;
     }
     
     if(in_paren != true){
     //cout << "changing par previous: \n ";
-        Par_previous = P_previous;
+        Par_p = p;
     }
-        if(connector == "0"){                   //should be empty but parse will handle it
-            ParseString.erase(ParseString.begin(), ParseString.begin() + i);
+        if(connector == "0"){       //should be empty but parse will handle it
+            P_str.erase(P_str.begin(), P_str.begin() + i);
             if(in_paren == true){
-                paren_size = paren_size - i;
-                    if(paren_size <= 0){
-                        Par_con_prev = Par_con_next;
-                        Par_con_next = 0;
-                         Par_previous = P_previous;
+                Par_size = Par_size - i;
+                    if(Par_size <= 0){
+                        Par_con_p = Par_con_n;
+                        Par_con_n = 0;
+                         Par_p = p;
                     }
             }
-            //cout << Par_con_prev << " " << Par_con << " " << P_con << endl;
             
-            P_previous = true;
-            Parse(ParseString, ParseString.size(), P_previous, P_previous_prev, P_con, P_con_prev, Par_previous, Par_previous_prev, Par_con, Par_con_prev,  Par_con_next, paren_size, in_paren);
+            p = true;
+            Parse(P_str, P_str.size(), p, pp, P_con, Par_p, Par_con, Par_con_p,  Par_con_n, Par_size, in_paren);
         }   
-        if(connector == "&&"){                   //&& case(only one not set to true*******)
-            ParseString.erase(ParseString.begin(), ParseString.begin() + i + 1);
+        if(connector == "&&"){      //&& case(only one not set to true*******)
+            P_str.erase(P_str.begin(), P_str.begin() + i + 1);
             if(in_paren == true){
-                paren_size = paren_size - i - 1;
-                    if(paren_size <= 0){
-                        Par_con_prev = Par_con_next;
-                        Par_con_next = 1;
-                        Par_previous = P_previous;
+                Par_size = Par_size - i - 1;
+                    if(Par_size <= 0){
+                        Par_con_p = Par_con_n;
+                        Par_con_n = 1;
+                        Par_p = p;
                     }
             }
-            //cout << Par_con_prev << " " << Par_con << " " << P_con << endl;
             
-            Parse(ParseString, ParseString.size(), P_previous, P_previous_prev, P_con, P_con_prev, Par_previous, Par_previous_prev, Par_con, Par_con_prev,  Par_con_next, paren_size, in_paren);
+        Parse(P_str, P_str.size(), p, pp, P_con, Par_p, Par_con, Par_con_p,  Par_con_n, Par_size, in_paren);
         }
         if(connector == "||"){                   //|| case
-            ParseString.erase(ParseString.begin(), ParseString.begin() + i + 1);
+            P_str.erase(P_str.begin(), P_str.begin() + i + 1);
             if(in_paren == true){
-                paren_size = paren_size - i - 1;
-                    if(paren_size <= 0){
-                        Par_con_prev = Par_con_next;
-                        Par_con_next = 2;
-                        Par_previous = P_previous;
+                Par_size = Par_size - i - 1;
+                    if(Par_size <= 0){
+                        Par_con_p = Par_con_n;
+                        Par_con_n = 2;
+                        Par_p = p;
                     }
             }
-            //cout << Par_con_prev << " " << Par_con << " " << P_con << endl;
             
-            if((P_previous_prev == true) && (P_con_prev == 2)){
-            P_previous = true;
+            if((pp == true) && (P_con_p == 2)){
+            p = true;
             }
-            Parse(ParseString, ParseString.size(), P_previous, P_previous_prev, P_con, P_con_prev, Par_previous, Par_previous_prev, Par_con, Par_con_prev, Par_con_next, paren_size, in_paren);
+            Parse(P_str, P_str.size(), p, pp, P_con, Par_p, Par_con, Par_con_p, Par_con_n, Par_size, in_paren);
         }
         if(connector == ";"){                    //; case
-            ParseString.erase(ParseString.begin(), ParseString.begin() + i + 1);
+            P_str.erase(P_str.begin(), P_str.begin() + i + 1);
             if(in_paren == true){
-                paren_size = paren_size - i - 1;
-                    if(paren_size <= 0){
-                        Par_con_prev = Par_con_next;
-                        Par_con_next = 3;
-                         Par_previous = P_previous;
+                Par_size = Par_size - i - 1;
+                    if(Par_size <= 0){
+                        Par_con_p = Par_con_n;
+                        Par_con_n = 3;
+                         Par_p = p;
                     }
             }
-            //cout << Par_con_prev << " " << Par_con << " " << P_con << endl;
-            
-            P_previous = true;
-            Parse(ParseString, ParseString.size(),  P_previous, P_previous_prev, P_con, P_con_prev, Par_previous, Par_previous_prev, Par_con, Par_con_prev, Par_con_next, paren_size, in_paren);
+            p = true;
+            Parse(P_str, P_str.size(),  p, pp, P_con, Par_p, Par_con, Par_con_p, Par_con_n, Par_size, in_paren);
         }
         return;
 }
+
 //////////////////////IGNORE THIS CODE, JUST DELETES THE COMMENT AND PRINTS////////////////////////////////////
 void string_check(string &s, bool &Is_Comment){//helper function for the comment delete
         for(unsigned i = 0; i < s.size(); ++i){
@@ -367,6 +390,7 @@ void Print(vector<string> pts){                  //function that prints string v
 	    for(it = pts.begin(); it != pts.end(); ++it){
       cout << *it << " ";                      //not really needed(the print function)
       }
+      cout << endl;
 }
 
 bool Prec_checker(vector<string> prec){
@@ -382,34 +406,39 @@ stack<char>  S;
 			else
 				S.pop();
 		}
-   }
+    }
 	}
 	return S.empty() ? true:false;
 }
 
-void erase_end_paren(string &s, bool &end_par){
+void erase_end_paren(string &s, bool &end_par, int &B_count){
     for(unsigned i = 0; i < s.size(); ++i){
         if(s.at(i) == ')'){
-            s.erase(s.begin()+i, s.end());
+            --B_count;
+        }
+        if(s.at(i) == '('){
+            ++B_count;
+        }
+        if((s.at(i) == ')') && (B_count == 0)){
+            s.erase(s.begin()+i);                  //may need to delete the second parameter since it deletes extra stuff
             end_par = true;
         }
     }
 }
 
-
-
 void Build_Paren(vector<string> &P_str, int &P_sz, int &Paren_sz){
-string temp = P_str.at(0);
-temp.erase(temp.begin());
+string temp = P_str.at(0);              //creates the paranthesis
+temp.erase(temp.begin());               //erases begining
 
-P_str.at(0) = temp;
+P_str.at(0) = temp;                     //starts constructing
 vector<string> change_parse;
 bool build_end_par = false;
+int B_count = 1;
 for(int i = 0; i < P_sz; ++i)
 {
     if(build_end_par == false){
         string find_end = P_str.at(i);
-        erase_end_paren(find_end, build_end_par);
+        erase_end_paren(find_end, build_end_par, B_count);
         change_parse.push_back(find_end);
         Paren_sz = i + 1;
     }
@@ -421,43 +450,50 @@ for(int i = 0; i < P_sz; ++i)
 P_str = change_parse;
 }
 
+
+//delete if it messes up                //should check for special cases
+/*bool special_check(vector<string> S){
+    for(int i = 0; i < S.size(); ++i){
+        for(int j = 1; j < S.at(i).size(); ++j){
+            if((S.at(i).at(j) == '(') && 
+            ((S.at(i).at(j - 1) != ((';') || ('&') || ('|') || (' ') )))){
+                cout << "WRONG INPUT: \n";
+                return false;
+            }
+        }
+    }
+}*/
 //////////////////////IGNORE THIS CODE, JUST DELETES THE COMMENT, CHECKS PARANTHESIS BALANCE, AND PRINTS////////////////////////////////////
 
 int main(){
 
-bool MainPrevious = true;   //allows us to run our first command
-bool MainPrevious_prev = false;
-
-bool Par_MainPrevious = true;   //allows us to run our first command
-bool Par_MainPrevious_prev = false;
-
-bool in_paren = false;
 int Begin_size = 0;
-vector<string> cmd;         //vector to hold our string
-string str;                 //will simply be our input string
+vector<string> cmd;                                                             //vector to hold our string
+string str;                                                                     //will simply be our input string
 
 
 while(1){
-    cout << "$ ";                                           //outputs the $ every iteration
+    cout << "$ ";                                                               //outputs the $ every iteration
        
     cmd.erase(cmd.begin(), cmd.end());               
-    getline(cin, str);                                      //gets input from user
-    char_separator<char> delim(" ", ";" "#");               // parameters for our input
+    getline(cin, str);                                                          //gets input from user
+    char_separator<char> delim(" ", ";" "#");                                   // parameters for our input
     tokenizer< char_separator<char> > mytok(str, delim);
     
     for(tokenizer<char_separator<char> >::iterator it = mytok.begin(); it != mytok.end(); ++it){
-    cmd.push_back(*it);                                     //push to our cmd vector
+    cmd.push_back(*it);                                                         //push to our cmd vector
     }
     
-    Delete_Comment(cmd);                                     // checks for #
-    bool done = Prec_checker(cmd);                                       //makes sure even number of precedence
+    Delete_Comment(cmd);                                                        // checks for #
+    bool done = Prec_checker(cmd);                                              //makes sure even number of precedence
     if(done == false){
-    cout << "unmatched paranthesis: " << endl;
-    cmd.erase(cmd.begin(), cmd.end());
+        cout << "unmatched paranthesis: " << endl;
+        cmd.erase(cmd.begin(), cmd.end());
     }
-    int size = cmd.size();                                   //gets updated size(if changed)
-    Parse(cmd, size, MainPrevious, MainPrevious_prev, 0, 0,  Par_MainPrevious, Par_MainPrevious_prev, 0, 0, 0, Begin_size, in_paren);                          //starts parsing commands
-    }
-
+    
+    Parse(cmd, cmd.size(), 1, 0, 0, 1, 0, 0, 0, Begin_size, 0);                          //starts parsing commands
+}
 return 0;
 }
+
+
