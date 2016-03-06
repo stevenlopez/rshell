@@ -15,11 +15,11 @@
 using namespace std;
 using namespace boost;
 
-void Print(vector<string> pts);
+void Print(vector<string> pts);                         //forward declarations
 void Build_Paren(vector<string> &P_str, int &P_sz, int &Paren_sz);
 
 ////////////////////////////////////////////////////////////////////
-int checkFlag(vector<string> &str){
+int checkFlag(vector<string> &str){                     //set flag
     int flag = 0;
     if(str.at(0) == "-e"){
         flag = 1;
@@ -38,23 +38,23 @@ int checkFlag(vector<string> &str){
 
 
 int testFunctionality(vector<string> ParsedString, unsigned index, bool p, int con, int p_con, bool Par_p, int Par_con_p, bool in_par, int size){
-    if(in_par == true){
+if(in_par == true){                                         //checks paranthesis
     
-    if((Par_p == false) && (con != 2) && (Par_con_p != 2))                //may need to get rid of the last condition
+    if((Par_p == false) && (con != 2) && (Par_con_p != 2))  //Case
     {
         return 1;   
     }
-    if((Par_p == true) && (Par_con_p == 2)){  
+    if((Par_p == true) && (Par_con_p == 2)){                //Case
         return 1;
     }
-   }
-   if((p == false) && (p_con != 2)){                //check if the last one was false
+}
+   if((p == false) && (p_con != 2)){                        //Case
         return 1;             
     }
-    if((p == true) && (p_con == 2)){
+    if((p == true) && (p_con == 2)){                        //Case
       return 0;
     }
-    int flag = checkFlag(ParsedString);
+    int flag = checkFlag(ParsedString);                     //get flag
     unsigned end = ParsedString.size();
     if(index > 0){
        end = index;
@@ -71,7 +71,7 @@ int testFunctionality(vector<string> ParsedString, unsigned index, bool p, int c
     //else{
       //  path = strdup((ParsedString.at(1)).c_str());
     //}    
-
+    //cout << "Flag: 0/1 = e, 2 = f, 3 = D :" << flag << endl;
     struct stat s;
     if(flag == 0 || flag == 1){
         if(stat(path, &s) == 0){                      
@@ -84,7 +84,7 @@ int testFunctionality(vector<string> ParsedString, unsigned index, bool p, int c
         }
     }
     else if(flag == 2){
-        if(s.st_mode && S_IFREG){                      //&& instead of &
+        if((stat(path, &s) == 0) && (s.st_mode & S_IFREG)){     //file               
             cout << "(TRUE)" << endl;
             return 0;
         }
@@ -94,7 +94,7 @@ int testFunctionality(vector<string> ParsedString, unsigned index, bool p, int c
         }
     }
     else if(flag == 3){
-        if(s.st_mode && S_IFDIR){                      //&& instead of &
+        if((stat(path, &s) == 0) && (s.st_mode & S_IFDIR)){    //directory
             cout << "(TRUE)" << endl;
             return 0;
         }
@@ -115,28 +115,27 @@ int testFunctionality(vector<string> ParsedString, unsigned index, bool p, int c
 //p = previous
 int execute(vector<string> s_t_e, bool p, int con, int p_con, bool Par_p, int Par_con_p, bool in_par, int size){ 
     
-   char** args = new char*[128];                        //creates new array to store the characters
-   //cout << "execute SIZE for string characters: " << size << endl;
+    char** args = new char*[128];    //creates new array to store the characters
     for(int i = 0; i < size; i++){
         char * temp = strdup(s_t_e.at(i).c_str());
         args[i] = temp;  
     }
     args[size] = '\0'; 
    
-  if(in_par == true){
+if(in_par == true){                                             //does parenthesis
     
-    if((Par_p == false) && (con != 2) && (Par_con_p != 2))                //may need to get rid of the last condition
+    if((Par_p == false) && (con != 2) && (Par_con_p != 2))      //case
     {
         return EXIT_FAILURE;   
     }
-    if((Par_p == true) && (Par_con_p == 2)){  
+    if((Par_p == true) && (Par_con_p == 2)){                    //case
         return EXIT_FAILURE;
     }
-   }
-   if((p == false) && (p_con != 2)){                //check if the last one was false
+}
+   if((p == false) && (p_con != 2)){                            //case
         return EXIT_FAILURE;             
     }
-    if((p == true) && (p_con == 2)){
+    if((p == true) && (p_con == 2)){                            //case
       return 0;
     }
         if (strcmp(args[0], "exit") == 0){      //if exit is the command 
@@ -155,7 +154,7 @@ int execute(vector<string> s_t_e, bool p, int con, int p_con, bool Par_p, int Pa
         }
     }
     int status;          
-    if ( waitpid(pid, &status, 0) == -1 ) {     //waitpid waits(not sure what it does)
+    if ( waitpid(pid, &status, 0) == -1 ){      //waitpid waits(not sure what it does)
         perror("waitpid failed");
         exit(1);
         return EXIT_FAILURE;
@@ -163,11 +162,11 @@ int execute(vector<string> s_t_e, bool p, int con, int p_con, bool Par_p, int Pa
     if(WIFEXITED(status)){                      //always goes into here(I think so)
         const int es = WEXITSTATUS(status);     // checks what the exit was
         //cout << "ES " << es << endl;
-	      if(es != 0){                          //if exit was 1 then it failed(IMPORTANT)
-		        return EXIT_FAILURE;
+	    if(es != 0){                            //if exit was 1 then it failed(IMPORTANT)
+		    return EXIT_FAILURE;
         }
     }
-return EXIT_SUCCESS;                         //else return 0 for true
+return EXIT_SUCCESS;                             //else return 0 for true
 }
 
 
@@ -189,9 +188,9 @@ if(in_paren == false){
     //cout << "changing par connection: \n";
     Par_con_p = P_con; 
 }
-while(P_str.at(0).at(0) == '('){
+while(P_str.at(0).at(0) == '('){                        //Magical loop
     in_paren = true;
-    Build_Paren(P_str, size, Par_size);
+    Build_Paren(P_str, size, Par_size);                 //build the parenthesis
 }
 
 /*
@@ -205,7 +204,7 @@ if(P_str.at(0).at(0) == '('){
 int P_size;                                      // will need variables for later
 string connector;                                   //will hold the ;/&&/||
 
-int P_con_p = P_con;
+int P_con_p = P_con;                            //the next connector is now prev
 
 
 
@@ -252,13 +251,10 @@ string SP = P_str.at(0);                       //if input is ;/&&/|| then error
 
 
 
-
-
 if(P_size > 126){                             // limit of 127 strings as one command
         cout << "INPUT TOO LARGE" << endl;
         return;
-    }
- 
+}
 
     int temp;
     unsigned itr = 0;
@@ -276,18 +272,16 @@ if(P_size > 126){                             // limit of 127 strings as one com
             }
             if(matching == false){
                 cout << "Error: no matching bracket" << endl;
-                exit(-1);
+                return;
             }
         }
         P_T_S.erase(P_T_S.begin());
-        //cout << " test \n";
-        //Print(P_T_S);
-        //cout << endl;
+   
     temp = testFunctionality(P_T_S, 0, p, P_con, P_con_p, Par_p, Par_con_p, in_paren, P_size);
         
     }
     else{
-    temp = execute(S_T_E, p, P_con, P_con_p, Par_p, Par_con_p, in_paren, P_size);              //checks whether it executed or not 
+    temp = execute(S_T_E, p, P_con, P_con_p, Par_p, Par_con_p, in_paren, P_size);  
     }
     
     pp = p;  
@@ -298,9 +292,8 @@ if(P_size > 126){                             // limit of 127 strings as one com
     else{
         p = false;
     }
-
     
-    if(in_paren != true){
+    if(in_paren != true){                           //updates parenthesis con
         Par_con_n = P_con_p;
     }
     
@@ -308,7 +301,7 @@ if(P_size > 126){                             // limit of 127 strings as one com
     //cout << "changing par previous: \n ";
         Par_p = p;
     }
-        if(connector == "0"){                   //should be empty but parse will handle it
+        if(connector == "0"){       //should be empty but parse will handle it
             P_str.erase(P_str.begin(), P_str.begin() + i);
             if(in_paren == true){
                 Par_size = Par_size - i;
@@ -322,7 +315,7 @@ if(P_size > 126){                             // limit of 127 strings as one com
             p = true;
             Parse(P_str, P_str.size(), p, pp, P_con, Par_p, Par_con, Par_con_p,  Par_con_n, Par_size, in_paren);
         }   
-        if(connector == "&&"){                   //&& case(only one not set to true*******)
+        if(connector == "&&"){      //&& case(only one not set to true*******)
             P_str.erase(P_str.begin(), P_str.begin() + i + 1);
             if(in_paren == true){
                 Par_size = Par_size - i - 1;
@@ -361,8 +354,6 @@ if(P_size > 126){                             // limit of 127 strings as one com
                          Par_p = p;
                     }
             }
-            //cout << Par_con_p << " " << Par_con << " " << P_con << endl;
-            
             p = true;
             Parse(P_str, P_str.size(),  p, pp, P_con, Par_p, Par_con, Par_con_p, Par_con_n, Par_size, in_paren);
         }
@@ -432,15 +423,14 @@ void erase_end_paren(string &s, bool &end_par, int &B_count){
             s.erase(s.begin()+i);                  //may need to delete the second parameter since it deletes extra stuff
             end_par = true;
         }
+    }
 }
-}
-
 
 void Build_Paren(vector<string> &P_str, int &P_sz, int &Paren_sz){
-string temp = P_str.at(0);
-temp.erase(temp.begin());
+string temp = P_str.at(0);              //creates the paranthesis
+temp.erase(temp.begin());               //erases begining
 
-P_str.at(0) = temp;
+P_str.at(0) = temp;                     //starts constructing
 vector<string> change_parse;
 bool build_end_par = false;
 int B_count = 1;
@@ -461,7 +451,7 @@ P_str = change_parse;
 }
 
 
-//delete if it messes up
+//delete if it messes up                //should check for special cases
 /*bool special_check(vector<string> S){
     for(int i = 0; i < S.size(); ++i){
         for(int j = 1; j < S.at(i).size(); ++j){
@@ -497,11 +487,13 @@ while(1){
     Delete_Comment(cmd);                                                        // checks for #
     bool done = Prec_checker(cmd);                                              //makes sure even number of precedence
     if(done == false){
-    cout << "unmatched paranthesis: " << endl;
-    cmd.erase(cmd.begin(), cmd.end());
+        cout << "unmatched paranthesis: " << endl;
+        cmd.erase(cmd.begin(), cmd.end());
     }
     
     Parse(cmd, cmd.size(), 1, 0, 0, 1, 0, 0, 0, Begin_size, 0);                          //starts parsing commands
-    }
+}
 return 0;
 }
+
+
