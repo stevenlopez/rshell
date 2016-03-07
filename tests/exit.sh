@@ -1,50 +1,18 @@
-#!bin/bash
-echo "junk && exit"
+echo
+./bin/rshell <<EOF
+echo "RUN in rshell directory"
 
-junk && exit
+echo "The same as the precedence test but shorted since it exits"
 
-echo "&&exit"
+echo "[ src ] && (test src)"
+[ src ] && (test src)
 
-&&exit
-
-echo "junk || exit"
-
-junk || exit
-
-echo "exit"
+echo "((test src && ls -a) &&  exit || test junk)#"
+((test src && ls -a) && exit || test junk)#
 
 exit
 
-echo "keep going?"
-
-keep going
-
-echo "should be done exit"
-
-should be done exit
-
-echo "I think that's why it's red;"
- 
-I think that's why it's red
-
-echo "ls; && junk"
-
-ls; && junk
-
-echo "cout rungging sjlnj endl"
-
-cout rungging sjlnj endl
-
-echo exit "# typing for enought test cases"
-
-# typing for enought test cases
-
-echo "# won't get here but exit"
-
-# won't get here but exit
-
-echo "exit(0)"
-
 exit(0)
 
-echo 
+EOF
+
