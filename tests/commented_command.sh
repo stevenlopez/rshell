@@ -1,34 +1,39 @@
-#!bin/bash
-echo "commented commands"
+echo
+./bin/rshell <<EOF
+echo "RUN in rshell directory"
 
-echo "ls -a && junk && ls # && ls"
+echo "The same as the precedence test but inlcude #'s"
 
-ls -a && junk && ls # && ls
+echo "[ src ] && #(test src)"
+[ src ] && #(test src)
 
-echo "junk && #dont output this"
+echo "((test src && ls -a) && test junk)#"
+((test src && ls -a) && test junk)#
 
-junk && #dont output this
+echo "[ fdafds ] #|| ((test lfkjasldkfja) && test src)"
+[ fdafds ] #|| ((test lfkjasldkfja) && test src)
 
-echo "#dont do any of this; || this || ls"
+echo "(([ -d #src ]))"
+(([ -d #src ]))
 
-#dont do any of this; || this || ls
+echo "(([ -f src ])# && (test -f src))"
+(([ -f src ])# && (test -f src))
 
-echo "ls && #; test"
+echo "((([ -e src ]) || #(test junk)# && ls -a) &&# test -e src)"
+((([ -e src ]) || #(test junk) && ls -a) &&# test -e src)
 
-ls && #; test
+echo "(((test -d src))#)"
+(((test -d src))#)
 
-echo "junk && ls && # echo here"
+echo "((test -f src#) || test -f src/main.cpp) && ([ -e src ])"
+((test -f src#) || test -f src/main.cpp) && ([ -e src ])
 
-junk && ls && # echo here
+echo "(([ -f src/main.cpp] && [ ju#nk ]) || test -f src)"
+(([ -f src/main.cpp] && [ ju#nk ]) || test -f src)
 
-echo "LS || LS || # || stuff"
+echo "[ -d src/main.cpp] && (#([ -e src ]) || (-f main.cpp))"
+[ -d src/main.cpp] && (#([ -e src ]) || (-f main.cpp))
 
-LS || LS || # || stuff
+exit
 
-echo ""#" TEST THIS OUT"
-
-"#" TEST THIS OUT
-
-echo "#done with the test cases here"
-
-"done with the test cases here"
+EOF
