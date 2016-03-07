@@ -257,19 +257,49 @@ if(P_size > 126){                             // limit of 127 strings as one com
 }
 
     int temp;
+    int index = 0;
     unsigned itr = 0;
     bool matching = false;
+    bool paren1 = false;
+    bool paren2 = false;
+    bool if_test = true;
+    bool if_paren = false;
     //cout << S_T_E.at(0) << S_T_E.at(P_size - 1) << endl;
+    if(S_T_E.at(0) == "]"){
+        cout << "Error: no matching bracket" << endl;
+        return;
+    }
     if((S_T_E.at(0) == "test") || (S_T_E.at(0) == "[")){
         vector<string> P_T_S = S_T_E;
-        if(S_T_E.at(0) == "["){
-            while(itr < S_T_E.size()){
-                if(S_T_E.at(itr) == "]"){
-                    matching = true;
+        if(S_T_E.at(0) == "test"){
+            if_test = true;
+            while(index < S_T_E.size()){
+                if(S_T_E.at(index) == "[" || S_T_E.at(index) == "]" ){
+                    if_paren = true;
                     break;
                 }
-                ++itr;
+                ++index;
             }
+        }
+        if(S_T_E.at(0) == "["){
+            if_paren = true;
+            if_test = false;
+            paren1 = true;
+        }
+        while(itr < S_T_E.size()){
+            if(S_T_E.at(itr) == "]"){
+                if_paren = true;
+                if_test = false;
+                paren2 = true;
+                break;
+            }
+            ++itr;
+        }
+        if(paren1 && paren2){
+            matching = true;
+        }
+        if( (if_test == false && matching == false) || 
+            (if_test == true && if_paren == true) ){
             if(matching == false){
                 cout << "Error: no matching bracket" << endl;
                 return;
