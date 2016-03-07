@@ -257,7 +257,7 @@ if(P_size > 126){                             // limit of 127 strings as one com
 }
 
     int temp;
-    int index = 0;
+    unsigned index = 0;
     unsigned itr = 0;
     bool matching = false;
     bool paren1 = false;
